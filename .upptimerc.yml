@@ -71,10 +71,11 @@ sites:
 
 status-website:
   cname: status.ripplefx.app
-  # Served from this repository, so the page keeps its logo when the
-  # website it describes is down.
-  logoUrl: /logo.png
-  favicon: /logo.png
+  # Served from this repository through GitHub, so the page keeps its logo
+  # when the website it describes is down. Not a /path: the export would
+  # crawl it as a page and collide with the copied asset.
+  logoUrl: https://raw.githubusercontent.com/ConnectingTheDots-DCWK/status/master/assets/logo.png
+  favicon: https://raw.githubusercontent.com/ConnectingTheDots-DCWK/status/master/assets/logo.png
   name: Ripple Effect status
   theme: dark
   introTitle: "Is something not working?"
