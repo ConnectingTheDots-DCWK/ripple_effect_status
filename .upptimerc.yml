@@ -1,31 +1,94 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# Ripple Effect's status: https://status.ripplefx.app
+# Configuration reference: https://upptime.js.org/docs/configuration
+owner: ConnectingTheDots-DCWK
+repo: status
+user-agent: ConnectingTheDots-DCWK
 
+# Downtime opens an issue assigned here, and GitHub notifies the assignee.
+assignees:
+  - WilliamKarolDiCioccio
+
+skipDescriptionUpdate: true
+skipTopicsUpdate: true
+
+# Each check asks for what a user's action actually needs, not just a page:
+# a check that only loaded the homepage would stay green while the update
+# check, the engine patches or crash reports were broken.
+#
+# The `apikey` on the two Supabase checks is the project's *publishable*
+# key — the one every copy of the app already ships. It grants nothing a
+# public client does not have. Never put the secret key here.
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  - name: Website
+    url: https://get.ripplefx.app/
+
+  # The app's update check. Goes through the site's server to GitHub's API
+  # with a server-side token, so this also fails if that token expires.
+  - name: Updates and downloads
+    url: https://get.ripplefx.app/api/releases
+    __dangerous__body_down_if_text_missing: '"published":true'
+
+  # The editor's engine-patch check, asked as a 1.6.0 editor on Linux would
+  # ask it. 1.6.0 is older than every engine patch of its contract, so the
+  # answer is always "available" unless the lookup itself broke.
+  - name: Engine patches
+    url: https://get.ripplefx.app/api/engine?contract=1.6&target=x86_64-unknown-linux-gnu&variant=python&bridge=-897256118&current=1.6.0
+    __dangerous__body_down_if_text_missing: '"available":true'
+
+  - name: News
+    url: https://get.ripplefx.app/news/feed.xml
+    __dangerous__body_down_if_text_missing: "<rss"
+
+  - name: Documentation
+    url: https://docs.ripplefx.app/
+
+  # A frozen version: the app records what somebody accepted by this URL.
+  - name: Legal documents
+    url: https://legal.ripplefx.app/v/eula-3.0
+    __dangerous__body_down_if_text_missing: "End-User Licence Agreement"
+
+  - name: Demo
+    url: https://demo.ripplefx.app/
+
+  # Where a crash report the author chose to send is stored.
+  - name: Crash reports
+    url: https://zrnamamcqiiwckdezsmj.supabase.co/storage/v1/status
+    headers:
+      - "apikey: sb_publishable_RTarGez6QStNZXlQK2rAfg_NGSfDU_8"
+
+  # The project and its gateway. The statistics insert itself needs a key
+  # no public check may hold, so this proves the backend is up, not the write.
+  - name: Usage statistics
+    url: https://zrnamamcqiiwckdezsmj.supabase.co/auth/v1/health
+    headers:
+      - "apikey: sb_publishable_RTarGez6QStNZXlQK2rAfg_NGSfDU_8"
+
+  # One pinned dictation model file, at the revision the app downloads.
+  # Hugging Face answers with a redirect to its CDN, which counts as up.
+  - name: Dictation models
+    method: HEAD
+    url: https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/nemotron-speech-streaming-en-0.6b/encoder.onnx
 
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  cname: status.ripplefx.app
+  # Served from this repository, so the page keeps its logo when the
+  # website it describes is down.
+  logoUrl: /logo.png
+  favicon: /logo.png
+  name: Ripple Effect status
+  theme: dark
+  introTitle: "Is something not working?"
+  introMessage: >-
+    Ripple Effect runs on your own machine, so an outage here never stops
+    the editor: it only delays the parts that go online — updates, engine
+    patches, crash reports, the news, and downloading a dictation model.
+    Each is checked every five minutes, from outside our own servers.
   navbar:
     - title: Status
       href: /
+    - title: Website
+      href: https://get.ripplefx.app
+    - title: Documentation
+      href: https://docs.ripplefx.app
     - title: GitHub
       href: https://github.com/$OWNER/$REPO
-
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
